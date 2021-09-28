@@ -30,6 +30,7 @@ namespace TurkishTreat.Data
                 .ToList();
         }
 
+       
         public Order GetOrderById(int id)
         {
             return _context.Orders
@@ -59,6 +60,21 @@ namespace TurkishTreat.Data
             }
 
             return _context.Orders
+                .ToList();
+        }
+        public IEnumerable<Order> GetAllOrdersByUser(string userName, bool includeItems)
+        {
+            if (includeItems)
+            {
+                return _context.Orders
+                    .Where(u => u.User.UserName == userName)
+                    .Include(o => o.Items)
+                    .ThenInclude(p => p.Product)
+                    .ToList();
+            }
+
+            return _context.Orders
+                .Where(u => u.User.UserName == userName)
                 .ToList();
         }
     }

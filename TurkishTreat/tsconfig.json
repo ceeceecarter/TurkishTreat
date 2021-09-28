@@ -1,0 +1,15 @@
+{
+  "include": [ "wwwroot/ts/**/*.ts" ],
+  "compileOnSave": true,
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "noEmitOnError": true,
+    "removeComments": false,
+    "module": "None",
+    "sourceMap": true,
+    "target": "es5"
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}

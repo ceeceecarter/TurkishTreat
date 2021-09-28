@@ -57,15 +57,16 @@ namespace TurkishTreat.Data
                 if (order != null)
                 {
                     order.User = user;
+                    var product = products?.First();
                     order.Items = new List<OrderItem>()
                     {
                         new OrderItem()
                         {
                             // ReSharper disable once PossibleMultipleEnumeration
-                            Product = products.First(),
+                            Product = product,
                             Quantity = 5,
                             // ReSharper disable once PossibleMultipleEnumeration
-                            UnitPrice = products.First().Price
+                            UnitPrice = product?.Price ?? 0
                         }
                     };
                     await _context.SaveChangesAsync();
@@ -74,6 +75,7 @@ namespace TurkishTreat.Data
                 {
                     order = new Order()
                     {
+                        User = user,
                         OrderDate = DateTime.Today,
                         OrderNumber = "100000",
                         Items = new List<OrderItem>()

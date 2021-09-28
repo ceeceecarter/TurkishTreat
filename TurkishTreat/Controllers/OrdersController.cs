@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using TurkishTreat.Data;
@@ -20,13 +22,17 @@ namespace TurkishTreat.Controllers
         private readonly IProductOrderRepository _repository;
         private readonly ILogger<OrdersController> _logger;
         private readonly IMapper _mapper;
+        private readonly UserManager<StoreUser> _userManager;
 
-        public OrdersController(IProductOrderRepository repository, ILogger<OrdersController> logger,
-            IMapper mapper)
+        public OrdersController(IProductOrderRepository repository, 
+            ILogger<OrdersController> logger,
+            IMapper mapper,
+            UserManager<StoreUser> userManager)
         {
             _repository = repository;
             _logger = logger;
             _mapper = mapper;
+            _userManager = userManager;
         }
 
         [HttpGet]
@@ -34,7 +40,9 @@ namespace TurkishTreat.Controllers
         {
             try
             {
-                var results = _repository.GetAllOrders(includeItems);
+                // ReSharper disable once PossibleNullReferenceException
+                var userName = User.Identity.Name;
+                var results = _repository.GetAllOrdersByUser(userName, includeItems);
                 return Ok(_mapper.Map<IEnumerable<Order>, IEnumerable<OrderViewModel>>(results));
             }
             catch (Exception e)
@@ -61,13 +69,20 @@ namespace TurkishTreat.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] OrderViewModel model)
+        public async Task<IActionResult> Post([FromBody] OrderViewModel model)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
                     var newOrder = _mapper.Map<OrderViewModel, Order>(model);
+                    if (newOrder.OrderDate == DateTime.MinValue)
+                    {
+                        newOrder.OrderDate = DateTime.Now;
+                    }
+
+                    var currentUser = await _userManager.FindByNameAsync(User.Identity?.Name);
+                    newOrder.User = currentUser;
                     _repository.AddEntity(newOrder);
                     if (_repository.SaveAll())
                     {
