@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Configuration;
@@ -9,21 +10,18 @@ using TurkishTreat.Data.Entities;
 
 namespace TurkishTreat.Data
 {
-    public class TurkishTreatDbContext : DbContext
+    public class TurkishTreatDbContext : IdentityDbContext<StoreUser>
     {
-        private readonly IConfiguration _config;
 
-        public TurkishTreatDbContext(IConfiguration config)
+        public TurkishTreatDbContext(DbContextOptions<TurkishTreatDbContext> options):base(options)
         {
-            _config = config;
         }
         public DbSet<Product> Products { get; set; }
         public DbSet<Order> Orders { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        protected override void OnModelCreating(ModelBuilder builder)
         {
-            base.OnConfiguring(optionsBuilder);
-            optionsBuilder.UseSqlServer(_config["ConnectionStrings:TurkishTreatDb"]);
+            base.OnModelCreating(builder);
         }
     }
 }

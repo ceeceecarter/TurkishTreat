@@ -26,11 +26,11 @@ namespace TurkishTreat.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult Get(bool includeItems = true)
         {
             try
             {
-                return Ok(_repository.GetAllOrders());
+                return Ok(_repository.GetAllOrders(includeItems));
             }
             catch (Exception e)
             {

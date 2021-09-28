@@ -9,8 +9,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using TurkishTreat.Data;
+using TurkishTreat.Data.Entities;
 using TurkishTreat.Services;
 
 namespace TurkishTreat
@@ -27,11 +30,18 @@ namespace TurkishTreat
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<TurkishTreatDbContext>();
+            services.AddIdentity<StoreUser, IdentityRole>(cfg =>
+            {
+                cfg.User.RequireUniqueEmail = true;
+            }).AddEntityFrameworkStores<TurkishTreatDbContext>();
+            services.AddDbContext<TurkishTreatDbContext>(cfg =>
+            {
+                cfg.UseSqlServer(Configuration.GetConnectionString("TurkishTreatDb"));
+            });
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddTransient<TurkishTreatSeeder>();
             services.AddTransient<IMailService, NullEmailService>();
-            services.AddScoped<IProductOrderRepository, ProductRepository>();
+            services.AddScoped<IProductOrderRepository, ProductOrderRepository>();
             services.AddControllersWithViews()
                 .AddRazorRuntimeCompilation()
                 .AddNewtonsoftJson(cfg => cfg.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);//handle to ignore self-referencing object
@@ -58,6 +68,7 @@ namespace TurkishTreat
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
