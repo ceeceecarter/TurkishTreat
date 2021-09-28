@@ -8,9 +8,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using TurkishTreat.Data;
 using TurkishTreat.Data.Entities;
@@ -34,6 +36,16 @@ namespace TurkishTreat
             {
                 cfg.User.RequireUniqueEmail = true;
             }).AddEntityFrameworkStores<TurkishTreatDbContext>();
+            services.AddAuthentication()
+                .AddJwtBearer(cfg =>
+                {
+                    cfg.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        ValidIssuer = Configuration["Tokens:Issuer"],
+                        ValidAudience = Configuration["Tokens:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Tokens:Key"]))
+                    };
+                });
             services.AddDbContext<TurkishTreatDbContext>(cfg =>
             {
                 cfg.UseSqlServer(Configuration.GetConnectionString("TurkishTreatDb"));

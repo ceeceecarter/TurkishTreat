@@ -70,27 +70,30 @@ namespace TurkishTreat.Data
                     };
                     await _context.SaveChangesAsync();
                 }
+                else
+                {
+                    order = new Order()
+                    {
+                        OrderDate = DateTime.Today,
+                        OrderNumber = "100000",
+                        Items = new List<OrderItem>()
+                    {
+                        new OrderItem()
+                        {
+                            // ReSharper disable once PossibleMultipleEnumeration
+                            // ReSharper disable once AssignNullToNotNullAttribute
+                            Product = products.First(),
+                            Quantity = 5,
 
-                //var order = new Order()
-                //{
-                //    OrderDate = DateTime.Today,
-                //    OrderNumber = "100000",
-                //    Items = new List<OrderItem>()
-                //    {
-                //        new OrderItem()
-                //        {
-                //            // ReSharper disable once PossibleMultipleEnumeration
-                //            // ReSharper disable once AssignNullToNotNullAttribute
-                //            Product = products.First(),
-                //            Quantity = 5,
+                            // ReSharper disable once PossibleMultipleEnumeration
+                            UnitPrice = products.First().Price
+                        }
+                    }
+                    };
+                    _context.Orders.Add(order);
+                    await _context.SaveChangesAsync();
+                }
 
-                //            // ReSharper disable once PossibleMultipleEnumeration
-                //            UnitPrice = products.First().Price
-                //        }
-                //    }
-                //};
-                //_context.Orders.Add(order);
-                //_context.SaveChanges();
             }
         }
     }

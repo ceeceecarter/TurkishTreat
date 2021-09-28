@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using TurkishTreat.Data;
@@ -9,6 +12,7 @@ using TurkishTreat.ViewModel;
 namespace TurkishTreat.Controllers
 {
     [Route("api/orders")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [ApiController]
     [Produces("application/json")]
     public class OrdersController : Controller
@@ -30,7 +34,8 @@ namespace TurkishTreat.Controllers
         {
             try
             {
-                return Ok(_repository.GetAllOrders(includeItems));
+                var results = _repository.GetAllOrders(includeItems);
+                return Ok(_mapper.Map<IEnumerable<Order>, IEnumerable<OrderViewModel>>(results));
             }
             catch (Exception e)
             {
@@ -46,7 +51,7 @@ namespace TurkishTreat.Controllers
             {
                 var order = _repository.GetOrderById(id);
                 if (order == null) return NotFound();
-                return Ok(order);
+                return Ok(_mapper.Map<Order, OrderViewModel>(order));
             }
             catch (Exception e)
             {
