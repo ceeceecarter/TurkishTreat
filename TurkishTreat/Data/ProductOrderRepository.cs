@@ -6,12 +6,12 @@ using TurkishTreat.Data.Entities;
 
 namespace TurkishTreat.Data
 {
-    public class ProductRepository : IProductOrderRepository
+    public class ProductOrderRepository : IProductOrderRepository
     {
         private readonly TurkishTreatDbContext _context;
-        private readonly ILogger<ProductRepository> _logger;
+        private readonly ILogger<ProductOrderRepository> _logger;
 
-        public ProductRepository(TurkishTreatDbContext context, ILogger<ProductRepository> logger)
+        public ProductOrderRepository(TurkishTreatDbContext context, ILogger<ProductOrderRepository> logger)
         {
             _context = context;
             _logger = logger;
@@ -48,11 +48,17 @@ namespace TurkishTreat.Data
             return _context.SaveChanges() > 0;
         }
 
-        public IEnumerable<Order> GetAllOrders()
+        public IEnumerable<Order> GetAllOrders(bool includeItems)
         {
+            if (includeItems)
+            {
+                return _context.Orders
+                    .Include(o => o.Items)
+                    .ThenInclude(p => p.Product)
+                    .ToList();
+            }
+
             return _context.Orders
-                .Include(o => o.Items)
-                .ThenInclude(p => p.Product)
                 .ToList();
         }
     }

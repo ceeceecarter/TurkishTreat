@@ -15,6 +15,9 @@ namespace TurkishTreat.Data
             CreateMap<Order, OrderViewModel>()
                 .ForMember(d => d.OrderId, s => s.MapFrom(i => i.Id))
                 .ReverseMap();
+
+            CreateMap<OrderItem, OrderItemViewModel>()
+                .ReverseMap();
         }
     }
 }

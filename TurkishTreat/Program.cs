@@ -35,7 +35,7 @@ namespace TurkishTreat
             if (scopeFactory == null) return;
             using var scope = scopeFactory.CreateScope();
             var seeder = scope.ServiceProvider.GetService<TurkishTreatSeeder>();
-            seeder?.Seed();
+            seeder?.SeedAsync().Wait();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

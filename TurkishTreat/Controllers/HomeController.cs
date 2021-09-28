@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using TurkishTreat.Data;
 using TurkishTreat.Models;
 using TurkishTreat.Services;
@@ -30,6 +31,7 @@ namespace TurkishTreat.Controllers
             return View();
         }
 
+        [Authorize]
         public IActionResult Shop()
         {
             var results = _repository.GetAllProducts().ToList();

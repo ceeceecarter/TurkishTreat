@@ -14,5 +14,6 @@ namespace TurkishTreat.ViewModel
         [Required]
         [MinLength(4)]
         public string OrderNumber { get; set; }
+        public ICollection<OrderItemViewModel> Items { get; set; } 
     }
 }
