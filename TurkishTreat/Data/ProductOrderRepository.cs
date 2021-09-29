@@ -20,7 +20,7 @@ namespace TurkishTreat.Data
         public IEnumerable<Product> GetAllProducts()
         {
             _logger.LogInformation("GetAllProducts is called");
-            return _context.Products.OrderBy(i => i.Title).ToList();
+            return _context.Products.Take(6).OrderBy(i => i.Title).ToList();
         }
 
         public IEnumerable<Product> GetProductsByCategory(string category)

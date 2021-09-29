@@ -17,7 +17,8 @@ namespace TurkishTreat.Data
                 .ReverseMap();
 
             CreateMap<OrderItem, OrderItemViewModel>()
-                .ReverseMap();
+                .ReverseMap()
+                .ForMember(d => d.Product, opt => opt.Ignore());
         }
     }
 }

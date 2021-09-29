@@ -1,0 +1,34 @@
+﻿<h1>Cart</h1>
+<br />
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th></th>
+        <th>Product</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th>Total</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let item of store.order.items">
+        <td>
+            <img src="/img/{{item.productArtId}}.jpg" alt="{{ item.productArtist }}" class="img-fluid product-thumbnail" />
+        </td>
+        <td>{{ item.productCategory }} - {{ item.productSize }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>{{ item.unitPrice | currency }}</td>
+        <td>{{ item.unitPrice * item.quantity | currency }}</td>
+    </tr>
+    </tbody>
+    <tfoot>
+    <tr>
+        <td colspan="6">Count: {{store.order.items.length}}</td>
+    </tr>
+    <tr>
+        <td colspan="6">SubTotal: {{store.order.subtotal | currency}}</td>
+    </tr>
+    </tfoot>
+</table>
+<a class="btn btn-success" *ngIf="store.order.items.length > 0" routerLink="checkout">Checkout</a>
+<hr/>
